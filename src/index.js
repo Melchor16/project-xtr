@@ -1,27 +1,24 @@
-const express = require('express')
-const dotenv = require('dotenv')
-const Sequelize = require('sequelize')
-const app = require('./app')
+const express = require("express");
+const dotenv = require("dotenv");
+const Sequelize = require("sequelize");
+const app = require("./app");
+const sequelize = require("./database/database");
+const Song = require("./models/songModel");
 
 // env variables
-dotenv.config()
+dotenv.config({ path: "./src/config.env" });
 
-console.log(process.env.DATABASE_USER, process.env.DATABASE_PASSWORD)
+// START SERVER ////////////////////////////////////////////////////////////////////////////////////////
+port = process.env.PORT;
 
-// connecting tu database------------------------------------------
-const sequelize = new Sequelize(`postgresql://${process.env.DATABASE_USER}:${process.env.DATABASE_PASSWORD}@ep-proud-bird-a82c3e7m-pooler.eastus2.azure.neon.tech/xtrdb?sslmode=require`, {
-    dialect: 'postgresql'
-})
-// sequelize.authenticate()
-//   .then(() => {
-//     console.log('Conexión exitosa a la base de datos');
-//   }).catch((error) => {
-//     console.error('No se pudo conectar a la base de datos:', error);
-//   });
-//------------------------------------------------------------------
+(async () => {
+  try {
+    await sequelize.sync();
 
-port = process.env.PORT
-
-app.listen(3000, ()=>{
-    console.log('App running on port 3000')
-});
+    app.listen(3000, () => {
+      console.log("App running on port 3000");
+    });
+  } catch (err) {
+    console.log(err);
+  }
+})();
