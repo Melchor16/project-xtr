@@ -1,9 +1,9 @@
 const { DataTypes } = require("sequelize");
 const sequelize = require("./../database/database");
-const Song = require("./songModel");
 
-const Playlist = sequelize.define("playlist", {
-  disposition: DataTypes.INTEGER,
+const Setlist = sequelize.define("setlist", {
+  name: { type: DataTypes.STRING, allowNull: false },
+
 });
 
-Playlist.hasMany();
+module.exports = Setlist;
