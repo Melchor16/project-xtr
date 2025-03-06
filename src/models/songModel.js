@@ -2,6 +2,12 @@ const { DataTypes } = require("sequelize");
 const sequelize = require("./../database/database");
 
 const Song = sequelize.define("song", {
+  id: {
+    type: DataTypes.INTEGER,
+    allowNull: false,
+    primaryKey: true,
+    autoIncrement: true,
+  },
   title: { type: DataTypes.STRING, allowNull: false },
   artist: { type: DataTypes.STRING, allowNull: false },
   duration: { type: DataTypes.INTEGER, allowNull: false },

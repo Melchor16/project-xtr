@@ -4,31 +4,22 @@ const app = require("./app");
 const sequelize = require("./database/database");
 const modelRalations = require('./database/associations')
 
-const testDatabase = require('./test')
+dotenv.config({ path: "./src/config.env" }); // env variables
+modelRalations() // Define relations bt models in database
+port = process.env.PORT || 3000;
 
-// env variables
-dotenv.config({ path: "./src/config.env" });
-// Define relations bt models in database
-//modelRalations()
+// try database connection
+sequelize.authenticate()
+.then(console.log('Database connected successfully!')) 
+.catch((err)=>console.log('Database connection error: ', err))
 
 // START SERVER ////////////////////////////////////////////////////////////////////////////////////////
-port = process.env.PORT;
-
-(async () => {
-  try {
-    //await sequelize.sync({force: true});
-    testDatabase()
-
-    app.listen(port, () => {
-      console.log(`App running on port ${port}`);
-    });
-  } catch (err) {
-    console.log(err);
-  }
-})();
-
-process.on('SIGINT', () => {
-  console.log('Cerrando servidor...');
-  process.exit();
+app.listen(port, () => {
+  console.log(`App running on port ${port}`);
 });
+
+// process.on('SIGINT', () => {
+//   console.log('Cerrando servidor...');
+//   process.exit();
+// });
 

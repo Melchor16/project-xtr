@@ -8,32 +8,27 @@ const Playlist = sequelize.define('playlist', {
         type: DataTypes.INTEGER,
         allowNull: false,
     },
-    song_id: {
+    songId: {
         type: DataTypes.INTEGER,
         allowNull: false,
-        references:{
-            model: Song,
-            key: "id"
+        references: {
+          model: Song,
+          key: "id",
         },
-    },
-    setlist_id: {
+      },
+      setlistId: {
         type: DataTypes.INTEGER,
         allowNull: false,
-        references:{
-            model: Setlist,
-            key: "id"
+        references: {
+          model: Setlist,
+          key: "id",
         },
-    }
-}, {
+      },
+}, 
+{
     timestamps: false,
+    primaryKey: false
 
-}, {
-    indexes: [
-        {
-            unique: true,
-            fields: ["setlist_id", "disposition"], // Unique inex in both
-        },
-    ],
-});
+},);
 
 module.exports = Playlist;

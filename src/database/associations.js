@@ -5,13 +5,13 @@ const Playlist = require('../models/playlistModel')
 const modelRelations = ()=>{
     Song.belongsToMany(Setlist, {
         through: Playlist,
-        foreignKey: "song_id",
-        otherKey: "setlist_id",
+        foreignKey: "songId",
+        otherKey: "setlistId",
     })
     Setlist.belongsToMany(Song, {
         through: Playlist,
-        foreignKey: "setlist_id",
-        otherKey: "song_id"
+        foreignKey: "setlistId", 
+        otherKey: "songId",
     })
 }
 
