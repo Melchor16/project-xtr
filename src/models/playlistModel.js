@@ -1,34 +1,35 @@
 const { DataTypes } = require("sequelize");
 const sequelize = require("./../database/database");
-const Song = require('./songModel')
-const Setlist = require('./setModel')
+const Song = require("./songModel");
+const Setlist = require("./setModel");
 
-const Playlist = sequelize.define('playlist', {
+const Playlist = sequelize.define(
+  "playlist",
+  {
     disposition: {
-        type: DataTypes.INTEGER,
-        allowNull: false,
+      type: DataTypes.INTEGER,
+      allowNull: false,
     },
     songId: {
-        type: DataTypes.INTEGER,
-        allowNull: false,
-        references: {
-          model: Song,
-          key: "id",
-        },
+      type: DataTypes.INTEGER,
+      allowNull: false,
+      references: {
+        model: Song,
+        key: "id",
       },
-      setlistId: {
-        type: DataTypes.INTEGER,
-        allowNull: false,
-        references: {
-          model: Setlist,
-          key: "id",
-        },
+    },
+    setlistId: {
+      type: DataTypes.INTEGER,
+      allowNull: false,
+      references: {
+        model: Setlist,
+        key: "id",
       },
-}, 
-{
-    timestamps: false,
-    primaryKey: false
-
-},);
+    },
+  },
+  {
+    primaryKey: false,
+  }
+);
 
 module.exports = Playlist;

@@ -1,23 +1,51 @@
 const { DataTypes } = require("sequelize");
 const sequelize = require("./../database/database");
 
-const Song = sequelize.define("song", {
-  id: {
-    type: DataTypes.INTEGER,
-    allowNull: false,
-    primaryKey: true,
-    autoIncrement: true,
+const Song = sequelize.define(
+  "song",
+  {
+    id: {
+      type: DataTypes.INTEGER,
+      allowNull: false,
+      primaryKey: true,
+      autoIncrement: true,
+    },
+    title: {
+      type: DataTypes.STRING,
+      allowNull: false,
+      validate: {
+        notEmpty: true,
+      },
+    },
+    artist: {
+      type: DataTypes.STRING,
+      allowNull: false,
+      validate: {
+        notEmpty: true,
+      },
+    },
+    duration: {
+      type: DataTypes.INTEGER,
+      allowNull: false,
+      validate: {
+        notEmpty: true,
+        min: 10,
+      },
+    },
+    tempo: DataTypes.INTEGER,
+    song_key: DataTypes.STRING,
+    genre: DataTypes.STRING,
+    year: DataTypes.INTEGER,
+    notes: DataTypes.STRING,
   },
-  title: { type: DataTypes.STRING, allowNull: false },
-  artist: { type: DataTypes.STRING, allowNull: false },
-  duration: { type: DataTypes.INTEGER, allowNull: false },
-  tempo: DataTypes.INTEGER,
-  song_key: DataTypes.STRING,
-  genre: DataTypes.STRING,
-  year: DataTypes.INTEGER,
-  notes: DataTypes.STRING,
-}, {
-  timestamps: false,
-});
+  {
+    indexes: [
+      {
+        unique: true,
+        fields: ["title", "artist"],
+      },
+    ],
+  }
+);
 
 module.exports = Song;

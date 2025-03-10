@@ -9,9 +9,9 @@ const sequelize = new Sequelize(
   `postgresql://${process.env.DATABASE_USER}:${process.env.DATABASE_PASSWORD}@${process.env.DATABASE}`,
   {
     dialect: "postgresql",
-    logging: false
+    logging: false,
   }
-)
+);
 ////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 module.exports = sequelize;
