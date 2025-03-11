@@ -32,7 +32,13 @@ const Song = sequelize.define(
         min: 10,
       },
     },
-    tempo: DataTypes.INTEGER,
+    tempo: {
+      type: DataTypes.INTEGER,
+      validate: {
+        min: 1,
+        max: 400,
+      },
+    },
     song_key: DataTypes.STRING,
     genre: DataTypes.STRING,
     year: DataTypes.INTEGER,

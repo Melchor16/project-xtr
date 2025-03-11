@@ -3,19 +3,18 @@ const APIFeatures = require("../utils/APIFeatures");
 
 exports.getAllSongs = async (req, res) => {
   try {
-    const features = APIFeatures(Song, req.query).filter();
+    const features = new APIFeatures(Song, req.query).filter();
     const songs = await features.execute();
-
-    //const songs = await Song.findAll();
     res.status(200).json({
-      ststus: "success",
+      status: "success",
+      results: songs.length,
       data: {
         songs,
       },
     });
   } catch (err) {
     res.status(500).json({
-      ststus: "error",
+      status: "error",
       message: err,
     });
   }
@@ -38,7 +37,7 @@ exports.getSong = async (req, res) => {
     });
   } catch (err) {
     res.status(500).json({
-      ststus: "error",
+      status: "error",
       message: "Internal server error: \n" + err,
     });
   }
@@ -48,7 +47,7 @@ exports.createSong = async (req, res) => {
   try {
     const newSong = await Song.create(req.body);
     res.status(201).json({
-      ststus: "success",
+      status: "success",
       data: {
         song: newSong,
       },
@@ -75,14 +74,14 @@ exports.createSong = async (req, res) => {
 
 exports.updateSong = (req, res) => {
   res.status(500).json({
-    ststus: "error",
+    status: "error",
     message: "this route is not yet defined",
   });
 };
 
 exports.deleteSong = (req, res) => {
   res.status(500).json({
-    ststus: "error",
+    status: "error",
     message: "this route is not yet defined",
   });
 };
