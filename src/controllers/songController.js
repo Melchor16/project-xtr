@@ -3,7 +3,10 @@ const APIFeatures = require("../utils/APIFeatures");
 
 exports.getAllSongs = async (req, res) => {
   try {
-    const features = new APIFeatures(Song, req.query).filter();
+    const features = new APIFeatures(Song, req.query)
+      .filter()
+      .limitFields()
+      .paginate();
     const songs = await features.execute();
     res.status(200).json({
       status: "success",

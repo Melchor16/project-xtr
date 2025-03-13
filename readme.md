@@ -40,7 +40,7 @@ The `Song` model represents the songs available in the database. Each song has t
 
 - A song can belong to multiple setlists through the intermediate table `Playlist`.
 
-#### **Raw sequelize model**
+#### **Sequelize Model Definition**
 
 ```javascript
 const Song = sequelize.define(
@@ -112,7 +112,7 @@ The `Setlist` model represents the setlists available in the database. Each setl
 
 - A setlist can contain multiple songs through the intermediate table `Playlist`.
 
-#### **Raw sequelize model**
+#### **Sequelize Model Definition**
 
 ```javascript
 const Setlist = sequelize.define("setlist", {
@@ -142,7 +142,7 @@ The `Playlist` model is an intermediate table that relates songs to setlists. Ea
 
 - A playlist belongs to a song (`Song`) and a setlist (`Setlist`).
 
-#### **Raw sequelize model**
+#### **Sequelize Model Definition**
 
 ```javascript
 const Playlist = sequelize.define(
@@ -185,24 +185,261 @@ Below are the available endpoints in the API:
 
 ### **1. Songs (`/api/v1/songs`)**
 
-#### **Get All Songs**
+### **1.1 Get All Songs**
 
-```markdown
-### **GET /api/v1/songs**
+#### **GET /api/v1/songs**
 
 Retrieves a list of all available songs.
 
-### **Query Parameters**
+#### **Query Parameters**
 
 - `duration[gte]`: Filters songs with a duration greater than or equal to the specified value.
 - `duration[lte]`: Filters songs with a duration less than or equal to the specified value.
 - `tempo[gt]`: Filters songs with a tempo greater than the specified value.
 - `tempo[lt]`: Filters songs with a tempo less than the specified value.
 - `artist`: Filters songs by artist.
-```
+
+(This applies to any parameter.)
 
 #### **Example Request**
 
 ```bash
-GET /api/v1/songs?duration[gte]=120&duration[lte]=300&tempo[gt]=100
+GET /api/v1/songs/?duration[lte]=500&tempo[gte]=120
 ```
+
+#### **Example Response**
+
+```json
+{
+  "status": "success",
+  "results": 2,
+  "data": {
+    "songs": [
+      {
+        "id": 14,
+        "title": "titulo 11",
+        "artist": "artista 5",
+        "duration": 456,
+        "tempo": 120,
+        "song_key": null,
+        "genre": null,
+        "year": null,
+        "notes": null,
+        "createdAt": "2025-03-13T21:57:19.643Z",
+        "updatedAt": "2025-03-13T21:57:19.643Z"
+      },
+      {
+        "id": 15,
+        "title": "titulo 12",
+        "artist": "artista 5",
+        "duration": 456,
+        "tempo": 120,
+        "song_key": null,
+        "genre": null,
+        "year": null,
+        "notes": null,
+        "createdAt": "2025-03-13T21:57:25.052Z",
+        "updatedAt": "2025-03-13T21:57:25.052Z"
+      }
+    ]
+  }
+}
+```
+
+#### **Select Fields**
+
+- `fields`: Select the fields that you want to display. When using this parameter, it will only return the specified fields (columns).
+
+#### **Example Request**
+
+```bash
+GET /api/v1/songs/?fields=title,artist,duration
+```
+
+#### **Example Response**
+
+```json
+{
+  "status": "success",
+  "results": 11,
+  "data": {
+    "songs": [
+      {
+        "title": "titulo 2",
+        "artist": "artista 1",
+        "duration": 10
+      },
+      {
+        "title": "titulo 3",
+        "artist": "artista 1",
+        "duration": 10
+      }
+    ]
+  }
+}
+```
+
+#### **Pagination**
+
+- `limit`: Defines the number of results to return.
+- `page`: Selects the page number to return.
+
+These two options work together. When you specify a `limit` and a `page`, the script automatically calculates which results should be returned.
+
+#### **Example Request**
+
+```bash
+GET /api/v1/songs/?page=2&limit=3
+```
+
+#### **Example Response**
+
+```json
+{
+  "status": "success",
+  "results": 3,
+  "data": {
+    "songs": [
+      {
+        "id": 7,
+        "title": "titulo 5",
+        "artist": "artista 4",
+        "duration": 150,
+        "tempo": null,
+        "song_key": null,
+        "genre": null,
+        "year": null,
+        "notes": null,
+        "createdAt": "2025-03-13T21:11:33.996Z",
+        "updatedAt": "2025-03-13T21:11:33.996Z"
+      },
+      {
+        "id": 8,
+        "title": "titulo 6",
+        "artist": "artista 3",
+        "duration": 400,
+        "tempo": null,
+        "song_key": null,
+        "genre": null,
+        "year": null,
+        "notes": null,
+        "createdAt": "2025-03-13T21:11:46.059Z",
+        "updatedAt": "2025-03-13T21:11:46.059Z"
+      },
+      {
+        "id": 9,
+        "title": "titulo 7",
+        "artist": "artista 2",
+        "duration": 400,
+        "tempo": null,
+        "song_key": null,
+        "genre": null,
+        "year": null,
+        "notes": null,
+        "createdAt": "2025-03-13T21:11:57.486Z",
+        "updatedAt": "2025-03-13T21:11:57.486Z"
+      }
+    ]
+  }
+}
+```
+
+#### **Example of a Full Request**
+
+This is how a full request might look:
+
+```bash
+GET /api/v1/songs/?duration[lte]=500&fields=title,artist,duration&page=2&limit=4
+```
+
+#### **Example Response**
+
+```json
+{
+  "status": "success",
+  "results": 3,
+  "data": {
+    "songs": [
+      {
+        "title": "titulo 5",
+        "artist": "artista 4",
+        "duration": 150
+      },
+      {
+        "title": "titulo 6",
+        "artist": "artista 3",
+        "duration": 400
+      },
+      {
+        "title": "titulo 7",
+        "artist": "artista 2",
+        "duration": 400
+      }
+    ]
+  }
+}
+```
+
+### **1.2 Get Song**
+
+##### **GET /api/v1/songs/id**
+
+Retrieves the song specified by the id.
+
+#### **Example Request**
+
+```bash
+GET /api/v1/songs/5
+```
+
+#### **Example Response**
+
+```json
+{
+  "status": "Success",
+  "data": {
+    "song": {
+      "id": 5,
+      "title": "titulo 3",
+      "artist": "artista 1",
+      "duration": 10,
+      "tempo": 0,
+      "song_key": "",
+      "genre": "",
+      "year": 0,
+      "notes": "",
+      "createdAt": "2025-03-10T22:10:19.091Z",
+      "updatedAt": "2025-03-10T22:10:19.091Z"
+    }
+  }
+}
+```
+
+### **1.3 Create a new song**
+
+##### **POST /api/v1/songs**
+
+Creates a new song in the `songs` table.
+
+#### **Example Request**
+
+```bash
+POST /api/v1/songs
+```
+
+#### **Example Request Body**
+
+```json
+{
+  "title": "Born to be Wild",
+  "artist": "Steppenwolf",
+  "duration": 210,
+  "tempo": 146,
+  "song_key": "E",
+  "genre": "Rock",
+  "year": 1968,
+  "notes": "This song require more rehearsal"
+}
+```
+
+**Note:** The song must have at least a `title`, `artist`, and `duration`, and the combination of `title` and `artist` must be unique.

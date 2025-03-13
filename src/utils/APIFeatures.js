@@ -44,8 +44,27 @@ class APIFeatures {
     return this;
   }
 
+  limitFields() {
+    if (this.queryString.fields) {
+      const fields = this.queryString.fields.split(",");
+      this.queryOptions.attributes = fields;
+    }
+    return this;
+  }
+
   async execute() {
     return await this.model.findAll(this.queryOptions);
+  }
+
+  paginate() {
+    const page = this.queryString.page * 1 || 1;
+    const limit = this.queryString.limit * 1 || 100;
+    const offset = (page - 1) * limit;
+
+    this.queryOptions.offset = offset;
+    this.queryOptions.limit = limit;
+
+    return this;
   }
 }
 
