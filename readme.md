@@ -1,102 +1,208 @@
-# **Proyecto XTR**
+# **Project XTR**
 
-Proyecto XTR es un backend diseñado para organizar setlists y listas de reproducción para bandas musicales. Consiste en una API conectada a una base de datos PostgreSQL.
-
----
-
-## **Estructura de la Base de Datos**
-
-Las tablas de la base de datos funcionan de la siguiente manera:
-
-- **`songs`**: Tabla donde se guardan todas las canciones disponibles.
-- **`sets`**: Tabla donde se guardan diferentes setlists.
-- **`playlists`**: Tabla intermedia entre `songs` y `sets`. Aquí se guarda qué canciones pertenecen a cada setlist.
+Project XTR is a backend designed to organize setlists and playlists for musical bands. It consists of an API connected to a PostgreSQL database.
 
 ---
 
-## **Modelos de la Base de Datos**
+## **Database Structure**
 
-A continuación, se describen los modelos utilizados en la base de datos del Proyecto XTR.
+The database tables work as follows:
 
----
-
-### **1. Modelo `Song`**
-
-El modelo `Song` representa las canciones disponibles en la base de datos. Cada canción tiene los siguientes atributos:
-
-#### **Atributos**
-
-- **`id`**: Identificador único de la canción (entero, autoincremental, clave primaria).
-- **`title`**: Título de la canción (cadena de texto, no puede ser nulo).
-- **`artist`**: Artista de la canción (cadena de texto, no puede ser nulo).
-- **`duration`**: Duración de la canción en segundos (entero, no puede ser nulo, mínimo 10 segundos).
-- **`tempo`**: Tempo de la canción en BPM (beats por minuto) (entero, opcional, rango entre 1 y 400).
-- **`song_key`**: Tonalidad de la canción (cadena de texto, opcional).
-- **`genre`**: Género musical de la canción (cadena de texto, opcional).
-- **`year`**: Año de lanzamiento de la canción (entero, opcional).
-- **`notes`**: Notas adicionales sobre la canción (cadena de texto, opcional).
-
-#### **Relaciones**
-
-- Una canción puede pertenecer a múltiples setlists a través de la tabla intermedia `Playlist`.
+- **`songs`**: Table where all available songs are stored.
+- **`sets`**: Table where different setlists are stored.
+- **`playlists`**: Intermediate table between `songs` and `sets`. It stores which songs belong to each setlist.
 
 ---
 
-### **2. Modelo `Setlist`**
+## **Database Models**
 
-El modelo `Setlist` representa los setlists disponibles en la base de datos. Cada setlist tiene los siguientes atributos:
-
-#### **Atributos**
-
-- **`id`**: Identificador único del setlist (entero, autoincremental, clave primaria).
-- **`name`**: Nombre del setlist (cadena de texto, no puede ser nulo).
-
-#### **Relaciones**
-
-- Un setlist puede contener múltiples canciones a través de la tabla intermedia `Playlist`.
+Below are the models used in the Project XTR database.
 
 ---
 
-### **3. Modelo `Playlist`**
+### **1. `Song` Model**
 
-El modelo `Playlist` es una tabla intermedia que relaciona las canciones con los setlists. Cada playlist tiene los siguientes atributos:
+The `Song` model represents the songs available in the database. Each song has the following attributes:
 
-#### **Atributos**
+#### **Attributes**
 
-- **`disposition`**: Orden de la canción en el setlist (entero, no puede ser nulo).
-- **`songId`**: ID de la canción (entero, clave foránea, referencia a `Song`).
-- **`setlistId`**: ID del setlist (entero, clave foránea, referencia a `Setlist`).
+- **`id`**: Unique identifier for the song (integer, auto-incremental, primary key).
+- **`title`**: Title of the song (string, cannot be null).
+- **`artist`**: Artist of the song (string, cannot be null).
+- **`duration`**: Duration of the song in seconds (integer, cannot be null, minimum 10 seconds).
+- **`tempo`**: Tempo of the song in BPM (beats per minute) (integer, optional, range between 1 and 400).
+- **`song_key`**: Key of the song (string, optional).
+- **`genre`**: Musical genre of the song (string, optional).
+- **`year`**: Release year of the song (integer, optional).
+- **`notes`**: Additional notes about the song (string, optional).
 
-#### **Relaciones**
+#### **Relationships**
 
-- Una playlist pertenece a una canción (`Song`) y a un setlist (`Setlist`).
+- A song can belong to multiple setlists through the intermediate table `Playlist`.
 
-## **Puntos de Acceso a la API**
+#### **Raw sequelize model**
 
-A continuación, se describen los puntos de acceso (endpoints) disponibles en la API:
+```javascript
+const Song = sequelize.define(
+  "song",
+  {
+    id: {
+      type: DataTypes.INTEGER,
+      allowNull: false,
+      primaryKey: true,
+      autoIncrement: true,
+    },
+    title: {
+      type: DataTypes.STRING,
+      allowNull: false,
+      validate: {
+        notEmpty: true,
+      },
+    },
+    artist: {
+      type: DataTypes.STRING,
+      allowNull: false,
+      validate: {
+        notEmpty: true,
+      },
+    },
+    duration: {
+      type: DataTypes.INTEGER,
+      allowNull: false,
+      validate: {
+        notEmpty: true,
+        min: 10,
+      },
+    },
+    tempo: {
+      type: DataTypes.INTEGER,
+      validate: {
+        min: 1,
+        max: 400,
+      },
+    },
+    song_key: DataTypes.STRING,
+    genre: DataTypes.STRING,
+    year: DataTypes.INTEGER,
+    notes: DataTypes.STRING,
+  },
+  {
+    indexes: [
+      {
+        unique: true,
+        fields: ["title", "artist"],
+      },
+    ],
+  }
+);
+```
 
 ---
 
-### **1. Canciones (`/api/v1/songs`)**
+### **2. `Setlist` Model**
 
-#### **Obtener todas las canciones**
+The `Setlist` model represents the setlists available in the database. Each setlist has the following attributes:
 
-````markdown
+#### **Attributes**
+
+- **`id`**: Unique identifier for the setlist (integer, auto-incremental, primary key).
+- **`name`**: Name of the setlist (string, cannot be null).
+
+#### **Relationships**
+
+- A setlist can contain multiple songs through the intermediate table `Playlist`.
+
+#### **Raw sequelize model**
+
+```javascript
+const Setlist = sequelize.define("setlist", {
+  id: {
+    type: DataTypes.INTEGER,
+    allowNull: false,
+    primaryKey: true,
+    autoIncrement: true,
+  },
+  name: { type: DataTypes.STRING, allowNull: false },
+});
+```
+
+---
+
+### **3. `Playlist` Model**
+
+The `Playlist` model is an intermediate table that relates songs to setlists. Each playlist has the following attributes:
+
+#### **Attributes**
+
+- **`disposition`**: Order of the song in the setlist (integer, cannot be null).
+- **`songId`**: ID of the song (integer, foreign key, references `Song`).
+- **`setlistId`**: ID of the setlist (integer, foreign key, references `Setlist`).
+
+#### **Relationships**
+
+- A playlist belongs to a song (`Song`) and a setlist (`Setlist`).
+
+#### **Raw sequelize model**
+
+```javascript
+const Playlist = sequelize.define(
+  "playlist",
+  {
+    disposition: {
+      type: DataTypes.INTEGER,
+      allowNull: false,
+    },
+    songId: {
+      type: DataTypes.INTEGER,
+      allowNull: false,
+      references: {
+        model: Song,
+        key: "id",
+      },
+    },
+    setlistId: {
+      type: DataTypes.INTEGER,
+      allowNull: false,
+      references: {
+        model: Setlist,
+        key: "id",
+      },
+    },
+  },
+  {
+    primaryKey: false,
+  }
+);
+```
+
+---
+
+## **API Endpoints**
+
+Below are the available endpoints in the API:
+
+---
+
+### **1. Songs (`/api/v1/songs`)**
+
+#### **Get All Songs**
+
+```markdown
 ### **GET /api/v1/songs**
 
-Obtiene una lista de todas las canciones disponibles.
+Retrieves a list of all available songs.
 
-#### **Parámetros de Consulta**
+### **Query Parameters**
 
-- `duration[gte]`: Filtra canciones con una duración mayor o igual al valor especificado.
-- `duration[lte]`: Filtra canciones con una duración menor o igual al valor especificado.
-- `tempo[gt]`: Filtra canciones con un tempo mayor al valor especificado.
-- `tempo[lt]`: Filtra canciones con un tempo menor al valor especificado.
-- `artist`: Filtra canciones por artista.
+- `duration[gte]`: Filters songs with a duration greater than or equal to the specified value.
+- `duration[lte]`: Filters songs with a duration less than or equal to the specified value.
+- `tempo[gt]`: Filters songs with a tempo greater than the specified value.
+- `tempo[lt]`: Filters songs with a tempo less than the specified value.
+- `artist`: Filters songs by artist.
+```
 
-#### **Ejemplo de Solicitud**
+#### **Example Request**
 
 ```bash
 GET /api/v1/songs?duration[gte]=120&duration[lte]=300&tempo[gt]=100
 ```
-````
